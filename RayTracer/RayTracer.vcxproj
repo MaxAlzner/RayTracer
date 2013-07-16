@@ -11,10 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="libraries\glm\core\dummy.cpp" />
+    <ClCompile Include="src\ACTOR.Sphere.cpp" />
+    <ClCompile Include="src\CORE.Camera.cpp" />
+    <ClCompile Include="src\CORE.Entity.cpp" />
+    <ClCompile Include="src\CORE.Light.cpp" />
+    <ClCompile Include="src\CORE.Material.cpp" />
     <ClCompile Include="src\EntryPoint.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ACTOR.Sphere.h" />
+    <ClInclude Include="include\CORE.Camera.h" />
+    <ClInclude Include="include\CORE.Entity.h" />
+    <ClInclude Include="include\CORE.Light.h" />
+    <ClInclude Include="include\CORE.Material.h" />
+    <ClInclude Include="include\CORE.Primitives.h" />
+    <ClInclude Include="include\RayTracer.h" />
     <ClInclude Include="libraries\glm\core\func_common.hpp" />
     <ClInclude Include="libraries\glm\core\func_exponential.hpp" />
     <ClInclude Include="libraries\glm\core\func_geometric.hpp" />
@@ -297,6 +308,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>MALib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>cd $(SolutionDir)bin
+del MALib.dll
+del *.exp
+del *.ilk
+del *.lib
+xcopy "$(SolutionDir)libraries\MALib\MALib.dll" "$(SolutionDir)bin"
+xcopy "$(SolutionDir)data\*.*" "$(SolutionDir)bin\data\*.*" /E /Y /C</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -315,6 +335,15 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>MALib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>cd $(SolutionDir)bin
+del MALib.dll
+del *.exp
+del *.ilk
+del *.lib
+xcopy "$(SolutionDir)libraries\MALib\MALib.dll" "$(SolutionDir)bin"
+xcopy "$(SolutionDir)data\*.*" "$(SolutionDir)bin\data\*.*" /E /Y /C</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
