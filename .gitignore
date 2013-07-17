@@ -49,6 +49,7 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
+[Oo]utput/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -58,7 +59,6 @@ build/
 *_p.c
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 *.pgc
