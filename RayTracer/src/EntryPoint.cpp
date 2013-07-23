@@ -1,10 +1,10 @@
 
 #include "..\include\RayTracer.h"
 
-const uint Width = 120;
-const uint Height = 90;
-const uint Renders = 48;
-const float TurnSpeed = 0.025f;
+const uint Width = 720;
+const uint Height = 480;
+const uint Renders = 480;
+const float TurnSpeed = 0.0025f;
 
 float Theta = 0.0f;
 
@@ -17,10 +17,17 @@ int main(int argc, char **argv)
 	LOG_Initialize(true);
 	RANDOM_Initialize();
 
+	SURFACE* marble_d = NULL;
+	SURFACE* marble_n = NULL;
+	SURFACE* marble_s = NULL;
+	ImportBMPFile("data/marble_d.bmp", &marble_d);
+	ImportBMPFile("data/marble_n.bmp", &marble_n);
+	ImportBMPFile("data/marble_s.bmp", &marble_s);
+
 	printf("\n");
 	printf("INITIALIZING SCENE\n\n");
 
-	VEC4 CameraPosition = VEC4(-0.2f, 1.2f, -5.6f, 1.0);
+	VEC4 CameraPosition = VEC4(-1.2f, 1.2f, -4.0f, 1.0);
 	MainCamera = new Camera;
 	MainCamera->position = CameraPosition;
 	MainCamera->dimensions = VEC2(4.0f, 3.0f);
@@ -33,6 +40,9 @@ int main(int argc, char **argv)
 	ImportOBJFile("data/topDiamond.obj", &diamond1->mesh);
 	diamond1->material->overlay = COLOR(0.05f, 0.4f, 1.0f, 1.0);
 	diamond1->material->reflect = COLOR(1.0f, 1.0f, 1.0f, 0.5f);
+	/*diamond1->material->setDiffuseMap(marble_d);
+	diamond1->material->setNormalMap(marble_n);
+	diamond1->material->setSpecularMap(marble_s);*/
 
 	Entity* diamond2 = new Entity;
 	Entities.add(diamond2);
@@ -40,6 +50,9 @@ int main(int argc, char **argv)
 	ImportOBJFile("data/bottomDiamond.obj", &diamond2->mesh);
 	diamond2->material->overlay = COLOR(0.2f, 1.0f, 0.9f, 1.0);
 	diamond2->material->reflect = COLOR(1.0f, 1.0f, 1.0f, 0.5f);
+	/*diamond2->material->setDiffuseMap(marble_d);
+	diamond2->material->setNormalMap(marble_n);
+	diamond2->material->setSpecularMap(marble_s);*/
 
 #if 1
 	Entity* background = new Entity;
@@ -73,6 +86,8 @@ int main(int argc, char **argv)
 		ClearBitmap(render, 0x333333);
 		memset(filename, 0, sizeof(char) * 64);
 		sprintf(filename, "RayTrace.%03d.bmp", i);
+		
+		Theta = float(i) * TurnSpeed;
 
 		MainCamera->position = VEC4(
 			(CameraPosition.x * cos(Theta)) - (CameraPosition.z * sin(Theta)), 
@@ -84,8 +99,6 @@ int main(int argc, char **argv)
 
 		ExportBMPFile(filename, render);
 		printf("DONE\n");
-
-		Theta += TurnSpeed;
 	}
 
 	delete [] filename;
