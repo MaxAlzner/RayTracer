@@ -13,7 +13,7 @@ public:
 
 	void getColorAt(COLOR* outColor, VEC2& uv);
 	float getSpecularAt(VEC2& uv);
-	VEC3 getNormalAt(VEC3& normal, VEC2& uv);
+	VEC3 getNormalAt(VEC3& normal, VEC3& tangent, VEC3& binormal, VEC2& uv);
 		
 	COLOR overlay;
 	COLOR emissive;

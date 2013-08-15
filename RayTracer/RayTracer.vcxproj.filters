@@ -30,9 +30,6 @@
     <ClCompile Include="src\CORE.Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ACTOR.Sphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libraries\glm\core\_detail.hpp">
@@ -417,9 +414,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CORE.Primitives.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ACTOR.Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

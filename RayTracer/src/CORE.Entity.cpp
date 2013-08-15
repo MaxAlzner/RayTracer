@@ -38,8 +38,14 @@ bool Entity::hitByRay(RAY& ray, RAYHIT* outputHit)
 		OBJ_TEXCOORD buv = this->mesh->texcoords[face->b_texcoord];
 		OBJ_TEXCOORD cuv = this->mesh->texcoords[face->c_texcoord];
 		OBJ_NORMAL an = this->mesh->normals[face->a_normal];
-		OBJ_NORMAL bn = this->mesh->normals[face->a_normal];
-		OBJ_NORMAL cn = this->mesh->normals[face->a_normal];
+		OBJ_NORMAL bn = this->mesh->normals[face->b_normal];
+		OBJ_NORMAL cn = this->mesh->normals[face->c_normal];
+		OBJ_NORMAL at = this->mesh->tangents[face->a_normal];
+		OBJ_NORMAL bt = this->mesh->tangents[face->b_normal];
+		OBJ_NORMAL ct = this->mesh->tangents[face->c_normal];
+		OBJ_NORMAL ab = this->mesh->binormals[face->a_normal];
+		OBJ_NORMAL bb = this->mesh->binormals[face->b_normal];
+		OBJ_NORMAL cb = this->mesh->binormals[face->c_normal];
 		
 		VEC3 faceNormal = Normalize(VEC3(an.x + bn.x + cn.x, an.y + bn.y + cn.y, an.z + bn.z + cn.z));
 		if (Dot(ray.direction, faceNormal) > 0) continue;
@@ -65,12 +71,6 @@ bool Entity::hitByRay(RAY& ray, RAYHIT* outputHit)
 			((a * ((f * k) - (g * j))) + (b * ((g * i) - (e * k))) + (c * ((e * j) - (f * i))));
 		float alpha = 1.0f - (beta + gamma);
 
-		VEC3 surfaceNormal = Normalize(VEC3(
-			(an.x * alpha) + (bn.x * beta) + (cn.x * gamma), 
-			(an.y * alpha) + (bn.y * beta) + (cn.y * gamma), 
-			(an.z * alpha) + (bn.z * beta) + (cn.z * gamma)
-			));
-
 		if (alpha >= 0 && beta >= 0 && gamma >= 0)
 		{
 			float t = 
@@ -85,6 +85,22 @@ bool Entity::hitByRay(RAY& ray, RAYHIT* outputHit)
 			float u = (alpha * auv.u) + (beta * buv.u) + (gamma * cuv.u);
 			float v = (alpha * auv.v) + (beta * buv.v) + (gamma * cuv.v);
 			
+			VEC3 surfaceNormal = Normalize(VEC3(
+				(an.x * alpha) + (bn.x * beta) + (cn.x * gamma), 
+				(an.y * alpha) + (bn.y * beta) + (cn.y * gamma), 
+				(an.z * alpha) + (bn.z * beta) + (cn.z * gamma)
+				));
+			VEC3 surfaceTangent = Normalize(VEC3(
+				(at.x * alpha) + (bt.x * beta) + (ct.x * gamma), 
+				(at.y * alpha) + (bt.y * beta) + (ct.y * gamma), 
+				(at.z * alpha) + (bt.z * beta) + (ct.z * gamma)
+				));
+			VEC3 surfaceBinormal = Normalize(VEC3(
+				(ab.x * alpha) + (bb.x * beta) + (cb.x * gamma), 
+				(ab.y * alpha) + (bb.y * beta) + (cb.y * gamma), 
+				(ab.z * alpha) + (bb.z * beta) + (cb.z * gamma)
+				));
+			
 			if (outputHit != NULL)
 			{
 				*outputHit = RAYHIT(
@@ -92,6 +108,8 @@ bool Entity::hitByRay(RAY& ray, RAYHIT* outputHit)
 					t, 
 					intersection, 
 					surfaceNormal, 
+					surfaceTangent, 
+					surfaceBinormal, 
 					this->material, 
 					VEC2(u, v), 
 					this);

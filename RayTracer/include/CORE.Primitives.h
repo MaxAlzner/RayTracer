@@ -38,12 +38,14 @@ struct RAYHIT
 		this->surfaceMaterial = NULL;
 		this->surface = NULL;
 	}
-	RAYHIT(RAY ray, float t, VEC4& intersection, VEC3& surfaceNormal, Material* surfaceMaterial, VEC2& surfaceUV, Entity* surface)
+	RAYHIT(RAY ray, float t, VEC4& intersection, VEC3& surfaceNormal, VEC3& surfaceTangent, VEC3& surfaceBinormal, Material* surfaceMaterial, VEC2& surfaceUV, Entity* surface)
 	{
 		this->ray = ray;
 		this->t = t;
 		this->intersection = intersection;
 		this->surfaceNormal = surfaceNormal;
+		this->surfaceTangent = surfaceTangent;
+		this->surfaceBinormal = surfaceBinormal;
 		this->surfaceMaterial = surfaceMaterial;
 		this->surfaceUV = surfaceUV;
 		this->surface = surface;
@@ -52,6 +54,8 @@ struct RAYHIT
 	float t;
 	VEC4 intersection;
 	VEC3 surfaceNormal;
+	VEC3 surfaceTangent;
+	VEC3 surfaceBinormal;
 	Material* surfaceMaterial;
 	VEC2 surfaceUV;
 	Entity* surface;

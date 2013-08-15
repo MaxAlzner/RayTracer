@@ -88,8 +88,10 @@ void Camera::calcSource(COLOR* outColor, RAYHIT &hit, VEC3& cameraDirection)
 	if (Lights.length() < 1) return;
 	if (hit.surfaceMaterial == NULL) return;
 
-	//*outColor = COLOR(abs(hit.surfaceNormal.x), abs(hit.surfaceNormal.y), abs(hit.surfaceNormal.z), 1.0f);
-	//return;
+#if 0
+	*outColor = COLOR(abs(hit.surfaceNormal.x), abs(hit.surfaceNormal.y), abs(hit.surfaceNormal.z), 1.0f);
+	return;
+#endif
 	
 	Material::GetColor(outColor, hit);
 	
@@ -97,13 +99,23 @@ void Camera::calcSource(COLOR* outColor, RAYHIT &hit, VEC3& cameraDirection)
 	if (hit.surfaceMaterial->reflect.a > 0)
 	{
 		//VEC3 reflectVector = hit.ray.direction * VEC3(hit.surfaceMaterial->reflect.r, hit.surfaceMaterial->reflect.g, hit.surfaceMaterial->reflect.b);
-		//reflectVector = Normalize(reflectVector);
-		RAY reflectRay(hit.intersection, Reflect(hit.ray.direction * -1.0f, hit.surfaceNormal));
+		VEC3 reflectVector = Reflect(hit.ray.direction * -1.0f, hit.surfaceNormal);
+		reflectVector = Normalize(reflectVector);
+
+		RAY reflectRay(hit.intersection, reflectVector);
 		RAYHIT reflectHit;
 
 		this->castRay(&reflectHit, reflectRay);
 		COLOR reflectColor;
 		Material::GetColor(&reflectColor, reflectHit);
+		
+		for (uint l = 0; l < Lights.length(); l++)
+		{
+			Light* light = Lights[l];
+				
+			light->calcLight(&reflectColor, reflectHit, cameraDirection);
+		}
+
 		outColor->r += reflectColor.r * hit.surfaceMaterial->reflect.a;
 		outColor->g += reflectColor.g * hit.surfaceMaterial->reflect.a;
 		outColor->b += reflectColor.b * hit.surfaceMaterial->reflect.a;
@@ -119,6 +131,7 @@ void Camera::calcSource(COLOR* outColor, RAYHIT &hit, VEC3& cameraDirection)
 	}
 #endif
 }
+
 void Camera::castRays(SURFACE* surface)
 {
 	VEC4 p1, p2, p3, p4;
@@ -142,12 +155,15 @@ void Camera::castRays(SURFACE* surface)
 			COLOR color(0.0f, 0.0f, 0.0f, 0.0f);
 			RAYHIT hit;
 			
-			/*this->sampleCastRays(&color, rayDirection, 
+#if 0
+			this->sampleCastRays(&color, rayDirection, 
 				p1 + (px * (float(k) / float(surface->width))) + (py * (float(i) / float(surface->height))), 
 				p1 + (px * (float(k + 1) / float(surface->width))) + (py * (float(i + 1) / float(surface->height))), 
-				this->sampleSize);*/
+				this->sampleSize);
+#else
 			this->castRay(&hit, RAY(rayPosition, rayDirection));
 			this->calcSource(&color, hit, normal);
+#endif
 			
 			if (color.a > 0) PutPixel(surface, k, i, color);
 		}

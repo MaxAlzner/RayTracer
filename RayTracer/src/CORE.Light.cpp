@@ -57,8 +57,8 @@ void Light::calcDiffuse(COLOR* outColor, RAYHIT& hit)
 
 	float lambert = Clamp(
 		Dot(lightVector, 
-		//hit.surfaceMaterial->getNormalAt(hit.surfaceNormal, hit.surfaceUV)
-		hit.surfaceNormal
+		hit.surfaceMaterial->getNormalAt(hit.surfaceNormal, hit.surfaceTangent, hit.surfaceBinormal, hit.surfaceUV)
+		//hit.surfaceNormal
 		) * -1.0f, 0.25f, 1.0f);
 
 	float r = Clamp(this->color.r * lambert * dropoff);

@@ -38,6 +38,6 @@ extern Camera* MainCamera;
 //#include "ACTOR\ACTOR.Cube.h"
 //#include "ACTOR\ACTOR.Diamond.h"
 //#include "ACTOR\ACTOR.Plane.h"
-#include "ACTOR.Sphere.h"
+//#include "ACTOR.Sphere.h"
 
 #endif

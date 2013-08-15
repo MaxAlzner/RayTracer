@@ -72,36 +72,30 @@ float Material::getSpecularAt(VEC2& uv)
 
 	return brightness;
 }
-VEC3 Material::getNormalAt(VEC3& normal, VEC2& uv)
+VEC3 Material::getNormalAt(VEC3& normal, VEC3& tangent, VEC3& binormal, VEC2& uv)
 {
 	float u = Clamp(uv.x);
 	float v = Clamp(uv.y);
 	
-	/*if (this->normalMap != NULL)
+	if (this->normalMap != NULL)
 	{
-		int* video = this->normalMap->video;
-		int width = this->normalMap->width;
-		int height = this->normalMap->height;
+		uint x = uint(u * float(this->normalMap->width));
+		uint y = uint(v * float(this->normalMap->height));
+		COLOR texture = COLOR();
+		GetPixel(this->normalMap, x, y, &texture);
 
-		if (video != NULL)
-		{
-			int normalInt = Drawing::GetPixel(video, width, height, u * width, v * height);
-			VECTOR mapNormal = VECTOR(
-				VALUE(RGB::GetRed(normalInt)) / 255.0, 
-				VALUE(RGB::GetGreen(normalInt)) / 255.0, 
-				VALUE(RGB::GetBlue(normalInt)) / 255.0, 
-				0);
+		VEC3 mapNormal = VEC3(texture.r, texture.g, texture.b);
+		mapNormal = (mapNormal * 2.0f) - 1.0f;
 
-			// Calculate a local coordinate space
-			VECTOR upVector(0.0, 0.0, 1.0, 0.0);
-			VECTOR xAxis = VECTOR::Tangent(upVector, normal);
-			VECTOR yAxis = normal; // At surface of the object
-			VECTOR zAxis = VECTOR::CrossProduct(yAxis, xAxis);
-			// Project the normal map value into the local space at this object
-			VECTOR result = (xAxis * mapNormal.x) + (yAxis * mapNormal.y) + (zAxis * mapNormal.z);
-			return result;
-		}
-	}*/
+		// Calculate a local coordinate space
+		VEC3 upVector(0.0f, 1.0f, 0.0f);
+		VEC3 xAxis = tangent;//Tangent(upVector, normal);
+		VEC3 yAxis = normal; // At surface of the object
+		VEC3 zAxis = binormal;//Cross(yAxis, xAxis);
+		// Project the normal map value into the local space at this object
+		VEC3 result = (xAxis * mapNormal.x) + (yAxis * mapNormal.y) + (zAxis * mapNormal.z);
+		return result;
+	}
 
 	return normal;
 }
