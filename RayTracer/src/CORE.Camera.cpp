@@ -93,35 +93,72 @@ void Camera::calcSource(COLOR* outColor, RAYHIT &hit, VEC3& cameraDirection)
 	return;
 #endif
 	
+#if 1
 	Material::GetColor(outColor, hit);
+#endif
+	
+	VEC3 reflectVector = Reflect(hit.ray.direction * -1.0f, hit.surfaceNormal);
+	reflectVector = Normalize(reflectVector);
+
+	VEC3 refractVector = Refract(hit.ray.direction, hit.surfaceNormal, 1.0f, hit.surfaceMaterial->refIndex);
+	refractVector = Normalize(refractVector);
+	
+#if 0
+	*outColor = COLOR(abs(refractVector.x), abs(refractVector.y), abs(refractVector.z), 1.0f);
+	return;
+#endif
+
+	COLOR reflectColor(0.0f, 0.0f, 0.0f);
+	COLOR refractColor(1.0f, 1.0f, 1.0f);
 	
 #if 1
-	if (hit.surfaceMaterial->reflect.a > 0)
+	RAY reflectRay(hit.intersection, reflectVector);
+	RAYHIT reflectHit;
+	if (this->castRay(&reflectHit, reflectRay))
 	{
-		//VEC3 reflectVector = hit.ray.direction * VEC3(hit.surfaceMaterial->reflect.r, hit.surfaceMaterial->reflect.g, hit.surfaceMaterial->reflect.b);
-		VEC3 reflectVector = Reflect(hit.ray.direction * -1.0f, hit.surfaceNormal);
-		reflectVector = Normalize(reflectVector);
-
-		RAY reflectRay(hit.intersection, reflectVector);
-		RAYHIT reflectHit;
-
-		this->castRay(&reflectHit, reflectRay);
-		COLOR reflectColor;
 		Material::GetColor(&reflectColor, reflectHit);
 		
 		for (uint l = 0; l < Lights.length(); l++)
 		{
 			Light* light = Lights[l];
 				
-			light->calcLight(&reflectColor, reflectHit, cameraDirection);
+			//light->calcLight(&reflectColor, reflectHit, cameraDirection);
+			light->calcDiffuse(&reflectColor, reflectHit);
 		}
-
-		outColor->r += reflectColor.r * hit.surfaceMaterial->reflect.a;
-		outColor->g += reflectColor.g * hit.surfaceMaterial->reflect.a;
-		outColor->b += reflectColor.b * hit.surfaceMaterial->reflect.a;
+	}
+#endif
+#if 0
+	RAY refractRay(hit.intersection, refractVector);
+	RAYHIT refractHit;
+	if (this->castRay(&refractHit, refractRay))
+	{
+		Material::GetColor(&refractColor, refractHit);
+		
+		for (uint l = 0; l < Lights.length(); l++)
+		{
+			Light* light = Lights[l];
+				
+			//light->calcLight(&refractColor, refractHit, cameraDirection);
+			//light->calcDiffuse(&refractColor, refractHit);
+		}
 	}
 #endif
 
+	outColor->a = 1.0f;
+#if 0
+	outColor->r += reflectColor.r * hit.surfaceMaterial->reflection;
+	outColor->g += reflectColor.g * hit.surfaceMaterial->reflection;
+	outColor->b += reflectColor.b * hit.surfaceMaterial->reflection;
+#elif 1
+	outColor->r = (outColor->r * refractColor.r) + (reflectColor.r * hit.surfaceMaterial->reflection);
+	outColor->g = (outColor->g * refractColor.g) + (reflectColor.g * hit.surfaceMaterial->reflection);
+	outColor->b = (outColor->b * refractColor.b) + (reflectColor.b * hit.surfaceMaterial->reflection);
+#else
+	outColor->r = refractColor.r;
+	outColor->g = refractColor.g;
+	outColor->b = refractColor.b;
+#endif
+	
 #if 1
 	for (uint l = 0; l < Lights.length(); l++)
 	{

@@ -33,6 +33,7 @@ void Light::calcLight(COLOR* outColor, RAYHIT& hit, VEC3& cameraVector)
 	this->calcIridescence(outColor, hit, cameraVector);
 #endif
 
+#if 0
 	bool hitByLight = this->hitByLight(hit);
 	if (!hitByLight)
 	{
@@ -43,6 +44,11 @@ void Light::calcLight(COLOR* outColor, RAYHIT& hit, VEC3& cameraVector)
 	{
 		this->calcSpecular(outColor, hit, cameraVector);
 	}
+#else
+	this->calcSpecular(outColor, hit, cameraVector);
+	bool hitByLight = this->hitByLight(hit);
+	if (!hitByLight) this->calcShadow(outColor, hit);
+#endif
 }
 void Light::calcDiffuse(COLOR* outColor, RAYHIT& hit)
 {
@@ -81,7 +87,7 @@ void Light::calcSpecular(COLOR* outColor, RAYHIT& hit, VEC3& cameraVector)
 	reflect = Normalize(reflect);
 
 	float specular = Dot(lightVector, reflect);
-	specular = pow(specular, 40);
+	specular = pow(specular, 80);
 	specular *= hit.surfaceMaterial->getSpecularAt(hit.surfaceUV);
 	specular *= Clamp(hit.surfaceMaterial->specular);
 	

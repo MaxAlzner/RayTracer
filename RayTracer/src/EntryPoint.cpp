@@ -1,7 +1,7 @@
 
 #include "..\include\RayTracer.h"
 
-#if 1
+#if 0
 const uint Width = 1280;
 const uint Height = 720;
 #else
@@ -44,11 +44,11 @@ int main(int argc, char **argv)
 	printf("\n");
 	printf("INITIALIZING SCENE\n\n");
 
-	VEC4 CameraPosition = VEC4(1.2f, 0.1f, -3.2f, 1.0);
+	VEC4 CameraPosition = VEC4(1.2f, 0.8f, -2.4f, 1.0);
 	MainCamera = new Camera;
 	MainCamera->position = CameraPosition;
 	MainCamera->dimensions = VEC2(ViewWidth, ViewWidth * 0.75f);
-	MainCamera->focalLength = 256.0f;
+	MainCamera->focalLength = 16.0f;
 	MainCamera->sampleSize = Samples;
 
 	Entity* diamond1 = new Entity;
@@ -57,7 +57,8 @@ int main(int argc, char **argv)
 	ImportOBJFile("data/topDiamond.obj", &diamond1->mesh);
 	diamond1->material->specular = 0.4f;
 	diamond1->material->overlay = COLOR(0.05f, 0.4f, 1.0f, 1.0);
-	diamond1->material->reflect = COLOR(1.0f, 1.0f, 1.0f, 0.5f);
+	diamond1->material->reflection = 1.0f;
+	diamond1->material->refIndex = 1.333f;
 
 	Entity* diamond2 = new Entity;
 	Entities.add(diamond2);
@@ -65,18 +66,20 @@ int main(int argc, char **argv)
 	ImportOBJFile("data/bottomDiamond.obj", &diamond2->mesh);
 	diamond2->material->specular = 0.4f;
 	diamond2->material->overlay = COLOR(0.2f, 1.0f, 0.9f, 1.0);
-	diamond2->material->reflect = COLOR(1.0f, 1.0f, 1.0f, 0.5f);
+	diamond2->material->reflection = 1.0f;
+	diamond2->material->refIndex = 1.333f;
 
 	Entity* background = new Entity;
 	Entities.add(background);
 	background->initialize();
 	ImportOBJFile("data/box.obj", &background->mesh);
 	background->material->overlay = COLOR(0.7f, 1.0f, 0.9f, 1.0);
-	background->material->reflect = COLOR(0.25f, 0.25f, 0.25f, 0.5f);
-	background->material->specular = 0.4f;
+	background->material->reflection = 1.0f;
+	background->material->specular = 0.25f;
 
 	Light* light1 = new Light(VEC4(0.8f, 0.2f, -2.4f, 0.0f), VEC3(0.001f, 0.04f, 0.12f), COLOR(1.0f, 1.0f, 1.0f, 1.0f));
 	Lights.add(light1);
+	light1->shadowIntensity = 0.8f;
 
 	printf("START RENDERING\n\n");
 
@@ -91,7 +94,7 @@ int main(int argc, char **argv)
 		printf("RENDERING FRAME : %03d ", i);
 		ClearBitmap(render, 0x333333);
 		memset(filename, 0, sizeof(char) * 128);
-		sprintf(filename, "RaySequence03_720p/RayTrace.%03d.bmp", i);
+		sprintf(filename, "RaySequence04_720p/RayTrace.%03d.bmp", i);
 		
 		Theta = float(i) * TurnSpeed;
 

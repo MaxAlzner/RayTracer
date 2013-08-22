@@ -4,9 +4,10 @@ Material::Material()
 {
 	this->overlay = COLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	this->emissive = COLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	this->reflect = COLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	this->alpha = 1.0f;
 	this->specular = 1.0f;
+	this->refIndex = 1.0f;
+	this->reflection = 1.f;
 	this->diffuseMap = NULL;
 	this->specularMap = NULL;
 	this->normalMap = NULL;

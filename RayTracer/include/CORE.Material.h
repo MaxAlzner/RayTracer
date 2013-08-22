@@ -17,9 +17,10 @@ public:
 		
 	COLOR overlay;
 	COLOR emissive;
-	COLOR reflect;
 	float alpha;
 	float specular;
+	float reflection;
+	float refIndex;
 
 	SURFACE* diffuseMap;
 	SURFACE* specularMap;
