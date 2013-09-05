@@ -1,7 +1,7 @@
 
 #include "..\include\RayTracer.h"
 
-#if 0
+#if 1
 const uint Width = 1280;
 const uint Height = 720;
 #else
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 	ImportOBJFile("data/box.obj", &background->mesh);
 	background->material->overlay = COLOR(0.7f, 1.0f, 0.9f, 1.0);
 	background->material->reflection = 1.0f;
-	background->material->specular = 0.25f;
+	background->material->specular = 0.4f;
 
 	Light* light1 = new Light(VEC4(0.8f, 0.2f, -2.4f, 0.0f), VEC3(0.001f, 0.04f, 0.12f), COLOR(1.0f, 1.0f, 1.0f, 1.0f));
 	Lights.add(light1);
